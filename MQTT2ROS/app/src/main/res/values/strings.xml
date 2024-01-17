@@ -3,6 +3,7 @@
     <string name="mqtt_to_ros_logo">MQTT to ROS logo</string>
     <string name="disconnect">Disconnect</string>
     <string name="subscribe_to_mqtt_topic">Subscribe</string>
+    <string name="unsubscribe">Stop Sub.</string>
     <string name="publish_mqtt_topic">Publish</string>
     <string name="connect">Connect</string>
     <string name="subscribe_txtview_text">Upon subscribing, the messages published by the ROS-based device will be displayed here.</string>

@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView subscribeStatusTxtview;
     private TextView publishStatusTxtview;
     private MQTTClient mqttClient;
+    private boolean subscribed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +75,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void messageArrived(String topic, MqttMessage message) throws Exception {
                         Log.i(TAG, "A new message was received on topic '" + topic + "'");
+                        runOnUiThread(() -> {
+                            subscribeStatusTxtview.setText(message.getPayload() + "\n" + subscribeStatusTxtview.getText());
+                        });
                     }
 
                     @Override
                     public void deliveryComplete(IMqttDeliveryToken token) {
                         Log.i(TAG, "A new message was sent to the MQTT server");
+                        runOnUiThread(() -> {
+                            subscribeStatusTxtview.setText("Published new message" + "\n" + subscribeStatusTxtview.getText());
+                        });
                     }
 
                     @Override
@@ -116,34 +123,74 @@ public class MainActivity extends AppCompatActivity {
         });
 
         subscribeBtn.setOnClickListener(view -> {
-            try {
-                mqttClient.subscribe(Constants.MQTT_SUBSCRIPTION_TOPIC, Constants.MQTT_QOS, new IMqttActionListener() {
-                    @Override
-                    public void onSuccess(IMqttToken asyncActionToken) {
-                        Log.i(TAG, "Subscription to the topic was successful");
-                        runOnUiThread(()->{
-                            subscribeStatusTxtview.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.success));
-                            subscribeStatusTxtview.setText("Success");
-                        });
-                    }
+            if (!subscribed) {
+                try {
+                    mqttClient.subscribe(Constants.MQTT_SUBSCRIPTION_TOPIC, Constants.MQTT_QOS, new IMqttActionListener() {
+                        @Override
+                        public void onSuccess(IMqttToken asyncActionToken) {
+                            Log.i(TAG, "Subscription to the topic was successful");
+                            subscribed = true;
+                            runOnUiThread(() -> {
+                                subscribeStatusTxtview.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.success));
+                                subscribeStatusTxtview.setText("Success");
+                                subscribeBtn.setText(getResources().getString(R.string.unsubscribe));
+                                ros2mqttTxtview.setText("");
+                            });
+                        }
 
-                    @Override
-                    public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                        Log.e(TAG, "Subscription to the topic failed");
-                        runOnUiThread(()->{
-                            subscribeStatusTxtview.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.error));
-                            subscribeStatusTxtview.setText("Failed");
-                        });
-                    }
-                });
-            } catch (MqttException e) {
-                Log.e(TAG, "Subscription to the topic failed");
-                Log.e(TAG, e.getMessage());
-                runOnUiThread(()->{
-                    subscribeStatusTxtview.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.error));
-                    subscribeStatusTxtview.setText("Failed");
-                });
+                        @Override
+                        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                            Log.e(TAG, "Subscription to the topic failed");
+                            runOnUiThread(() -> {
+                                subscribeStatusTxtview.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.error));
+                                subscribeStatusTxtview.setText("Failed");
+                            });
+                        }
+                    });
+
+                } catch (MqttException e) {
+                    Log.e(TAG, "Subscription to the topic failed");
+                    Log.e(TAG, e.getMessage());
+                    runOnUiThread(() -> {
+                        subscribeStatusTxtview.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.error));
+                        subscribeStatusTxtview.setText("Failed");
+                    });
+                }
             }
+            else{
+                try {
+                    mqttClient.unsubscribe(Constants.MQTT_SUBSCRIPTION_TOPIC, new IMqttActionListener() {
+                        @Override
+                        public void onSuccess(IMqttToken asyncActionToken) {
+                            Log.i(TAG, "Unsubscribed from topic was successful");
+                            subscribed = false;
+                            runOnUiThread(() -> {
+                                subscribeStatusTxtview.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+                                subscribeStatusTxtview.setText("");
+                                ros2mqttTxtview.setText(getResources().getString(R.string.subscribe_txtview_text));
+                                subscribeBtn.setText(getResources().getString(R.string.subscribe_to_mqtt_topic));
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                            Log.e(TAG, "Unsubscribed from topic failed");
+                            runOnUiThread(() -> {
+                                subscribeStatusTxtview.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.error));
+                                subscribeStatusTxtview.setText("Failed");
+                            });
+                        }
+                    });
+                } catch (MqttException e) {
+                    Log.e(TAG, "Unsubscribed from topic failed");
+                    Log.e(TAG, e.getMessage());
+                    runOnUiThread(() -> {
+                        subscribeStatusTxtview.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.error));
+                        subscribeStatusTxtview.setText("Failed");
+                    });
+                }
+            }
+
         });
 
         publishBtn.setOnClickListener(view -> {
@@ -155,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(()->{
                             publishStatusTxtview.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.success));
                             publishStatusTxtview.setText("Success");
+                            mqtt2rosTxtview.setText("");
                         });
                     }
 
