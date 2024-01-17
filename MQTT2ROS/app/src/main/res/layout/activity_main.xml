@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="285dp"
+        android:layout_height="147dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/mqtt2ross"
+        android:contentDescription="@string/mqtt_to_ros_logo" />
+
+    <Button
+        android:id="@+id/disconnect_btn"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#037180"
+        android:text="@string/disconnect"
+        app:layout_constraintStart_toEndOf="@+id/connect_btn"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <Button
+        android:id="@+id/subscribe_btn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#F2C2C8"
+        android:text="@string/subscribe_to_mqtt_topic"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connect_btn" />
+
+    <Button
+        android:id="@+id/publish_btn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#A2BDED"
+        android:text="@string/publish_mqtt_topic"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ros2mqtt_txtview" />
+
+    <Button
+        android:id="@+id/connect_btn"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#037180"
+        android:text="@string/connect"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/ros2mqtt_txtview"
+        android:layout_width="309dp"
+        android:layout_height="119dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="16dp"
+        android:background="#F2C2C8"
+        android:text="@string/subscribe_txtview_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subscribe_btn" />
+
+    <TextView
+        android:id="@+id/mqtt2ros_txtview2"
+        android:layout_width="309dp"
+        android:layout_height="119dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="16dp"
+        android:background="#A2BDED"
+        android:text="@string/publish_txtview_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/publish_btn" />
+
+    <TextView
+        android:id="@+id/subscribe_status_txtview"
+        android:layout_width="99dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:background="#cccccc"
+        app:layout_constraintStart_toEndOf="@+id/subscribe_btn"
+        app:layout_constraintTop_toBottomOf="@+id/disconnect_btn" />
+
+    <TextView
+        android:id="@+id/publish_status_txtview"
+        android:layout_width="99dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:background="#cccccc"
+        app:layout_constraintStart_toEndOf="@+id/publish_btn"
+        app:layout_constraintTop_toBottomOf="@+id/ros2mqtt_txtview" />
+
+    <Button
+        android:id="@+id/connection_status_btn"
+        android:layout_width="15dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#cccccc"
+        android:clickable="false"
+        android:enabled="false"
+        app:cornerRadius="25dp"
+        app:layout_constraintStart_toEndOf="@+id/disconnect_btn"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
