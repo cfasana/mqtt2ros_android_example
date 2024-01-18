@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import org.eclipse.paho.client.mqttv3.*;
 
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView publishStatusTxtview;
     private MQTTClient mqttClient;
     private boolean subscribed = false;
+    private int msg_number = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +37,9 @@ public class MainActivity extends AppCompatActivity {
         publishBtn = findViewById(R.id.publish_btn);
         connectionStatusBtn = findViewById(R.id.connection_status_btn);;
 
-        ros2mqttTxtview = findViewById(R.id.ros2mqtt_txtview);
-        mqtt2rosTxtview = findViewById(R.id.mqtt2ros_txtview2);
+        ros2mqttTxtview = findViewById(R.id.subscribe_txtview);
+        ros2mqttTxtview.setMovementMethod(new ScrollingMovementMethod());
+        mqtt2rosTxtview = findViewById(R.id.publish_txtview);
         subscribeStatusTxtview = findViewById(R.id.subscribe_status_txtview);
         publishStatusTxtview = findViewById(R.id.publish_status_txtview);
 
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                         Log.e(TAG, "Unable to connect to the MQTT server");
+                        Log.e(TAG, Log.getStackTraceString(exception));
                         runOnUiThread(()->{
                             connectionStatusBtn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.error));
                         });
@@ -65,18 +69,23 @@ public class MainActivity extends AppCompatActivity {
                 }, new MqttCallbackExtended() {
                     @Override
                     public void connectionLost(Throwable cause) {
-                        Log.e(TAG, "Connection to MQTT server was lost due to the following cause");
-                        Log.e(TAG, "CAUSE: " + cause);
-                        runOnUiThread(()->{
-                            connectionStatusBtn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.error));
-                        });
+                        if (cause==null){
+                            Log.e(TAG, "Connection to MQTT server was lost, due to explicit request to end the connection.");
+                        }
+                        else {
+                            Log.e(TAG, "Connection to MQTT server was lost due to the following cause");
+                            Log.e(TAG, "CAUSE: " + cause);
+                            runOnUiThread(() -> {
+                                connectionStatusBtn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.error));
+                            });
+                        }
                     }
 
                     @Override
                     public void messageArrived(String topic, MqttMessage message) throws Exception {
                         Log.i(TAG, "A new message was received on topic '" + topic + "'");
                         runOnUiThread(() -> {
-                            subscribeStatusTxtview.setText(message.getPayload() + "\n" + subscribeStatusTxtview.getText());
+                            ros2mqttTxtview.setText(new String(message.getPayload()) + "\n" + ros2mqttTxtview.getText().toString());
                         });
                     }
 
@@ -84,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
                     public void deliveryComplete(IMqttDeliveryToken token) {
                         Log.i(TAG, "A new message was sent to the MQTT server");
                         runOnUiThread(() -> {
-                            subscribeStatusTxtview.setText("Published new message" + "\n" + subscribeStatusTxtview.getText());
+                            mqtt2rosTxtview.setText("Published new message (" + msg_number + ")");
+                            msg_number+=1;
                         });
                     }
 
@@ -195,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
         publishBtn.setOnClickListener(view -> {
             try {
-                mqttClient.publish(Constants.MQTT_PUBLISHED_TOPIC, Constants.MQTT_PUBLISHED_MSG, Constants.MQTT_QOS, Constants.MQTT_RETAINED, new IMqttActionListener() {
+                mqttClient.publish(Constants.MQTT_PUBLISHED_TOPIC, "(" + msg_number + ")" + Constants.MQTT_PUBLISHED_MSG, Constants.MQTT_QOS, Constants.MQTT_RETAINED, new IMqttActionListener() {
                     @Override
                     public void onSuccess(IMqttToken asyncActionToken) {
                         Log.i(TAG, "Published message to the topic successfully");

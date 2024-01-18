@@ -7,15 +7,15 @@
     tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/logo"
         android:layout_width="285dp"
         android:layout_height="147dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
+        android:contentDescription="@string/mqtt_to_ros_logo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mqtt2ross"
-        android:contentDescription="@string/mqtt_to_ros_logo" />
+        app:srcCompat="@drawable/mqtt2ross" />
 
     <Button
         android:id="@+id/disconnect_btn"
@@ -26,13 +26,13 @@
         android:backgroundTint="#037180"
         android:text="@string/disconnect"
         app:layout_constraintStart_toEndOf="@+id/connect_btn"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <Button
         android:id="@+id/subscribe_btn"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_marginStart="52dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="12dp"
         android:backgroundTint="#F2C2C8"
         android:text="@string/subscribe_to_mqtt_topic"
@@ -44,30 +44,30 @@
         android:id="@+id/publish_btn"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_marginStart="52dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="16dp"
         android:backgroundTint="#A2BDED"
         android:text="@string/publish_mqtt_topic"
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ros2mqtt_txtview" />
+        app:layout_constraintTop_toBottomOf="@+id/subscribe_txtview" />
 
     <Button
         android:id="@+id/connect_btn"
         android:layout_width="140dp"
         android:layout_height="50dp"
-        android:layout_marginStart="52dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="8dp"
         android:backgroundTint="#037180"
         android:text="@string/connect"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <TextView
-        android:id="@+id/ros2mqtt_txtview"
+        android:id="@+id/subscribe_txtview"
         android:layout_width="309dp"
         android:layout_height="119dp"
-        android:layout_marginStart="52dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="16dp"
         android:background="#F2C2C8"
         android:text="@string/subscribe_txtview_text"
@@ -77,10 +77,10 @@
         app:layout_constraintTop_toBottomOf="@+id/subscribe_btn" />
 
     <TextView
-        android:id="@+id/mqtt2ros_txtview2"
+        android:id="@+id/publish_txtview"
         android:layout_width="309dp"
         android:layout_height="119dp"
-        android:layout_marginStart="52dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="16dp"
         android:background="#A2BDED"
         android:text="@string/publish_txtview_text"
@@ -96,6 +96,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:background="#cccccc"
+        android:gravity="center"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/subscribe_btn"
         app:layout_constraintTop_toBottomOf="@+id/disconnect_btn" />
 
@@ -106,20 +110,40 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:background="#cccccc"
+        android:gravity="center"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/publish_btn"
-        app:layout_constraintTop_toBottomOf="@+id/ros2mqtt_txtview" />
+        app:layout_constraintTop_toBottomOf="@+id/subscribe_txtview" />
 
     <Button
         android:id="@+id/connection_status_btn"
         android:layout_width="15dp"
         android:layout_height="25dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="22dp"
         android:backgroundTint="#cccccc"
         android:clickable="false"
         android:enabled="false"
         app:cornerRadius="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/disconnect_btn"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+    <TextView
+        android:id="@+id/decoration_txtview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:background="#21314e"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/publish_txtview"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

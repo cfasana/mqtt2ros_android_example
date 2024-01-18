@@ -6,6 +6,6 @@
     <string name="unsubscribe">Stop Sub.</string>
     <string name="publish_mqtt_topic">Publish</string>
     <string name="connect">Connect</string>
-    <string name="subscribe_txtview_text">Upon subscribing, the messages published by the ROS-based device will be displayed here.</string>
-    <string name="publish_txtview_text">Upon publishing, the messages published by the ROS-based device will be displayed here.</string>
+    <string name="subscribe_txtview_text">Upon subscribing, the messages that are received will be displayed here.</string>
+    <string name="publish_txtview_text">Upon publishing, the messages published by this device will be displayed here.</string>
 </resources>
