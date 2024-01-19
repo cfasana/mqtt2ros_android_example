@@ -115,7 +115,8 @@ In the following, a description of how to configure the environment and run the 
       cd %MOSQUITTO_FOLDER%
       mosquitto -v -c %CONFIG_FILE%
       ```
-2) Put the same string (_e.g.,_ mqtt_topic) in place of `<SUBSCRIBE_TOPIC>` and `<PUBLISH_TOPIC>`, and by updating the other constants (_e.g.,_ substitute `<HOST_IP>` with the IP of the machine on which Mosquitto is running.
+      
+2) In the `Constants.java` file, Put the same string (_e.g.,_ mqtt_topic) in place of `<SUBSCRIBE_TOPIC>` and `<PUBLISH_TOPIC>`, and by updating the other constants (_e.g.,_ substitute `<HOST_IP>` with the IP of the machine on which Mosquitto is running.
 3) Run the application
    * Click the `connect` button to connect to `Mosquitto`. A green light is shown if the connection succeeds
    * Click the `subscribe` button to subscribe to the MQTT topic
@@ -123,5 +124,105 @@ In the following, a description of how to configure the environment and run the 
      
      https://github.com/cfasana/mqtt2ros_android_example/assets/143723410/bd1fa96c-f64d-4e2c-bf65-a9da798438e4
 
+## MQTT2ROS Application Testing
+1) Start `Mosquitto` on the machine on which it was installed:
+      
+      ```
+      cd %MOSQUITTO_FOLDER%
+      mosquitto -v -c %CONFIG_FILE%
+      ```
+      
+2) Create a new ROS workspace and a directory to contain the `mqtt_client` configuration `.yaml` file:
 
+   ```
+   cd ~ && mkdir mqtt2ros_ws
+   cd mqtt2ros_ws && mkdir mqtt_client_config
+   cd mqtt_client_config
+   ```
+3) Create the new `.yaml` file and insert the following text into it:
+   ```
+   mqtt_client:
+   ros__parameters:
+     broker:
+       host: <HOST_IP> # Replace with the IP address of the device on which Mosquitto is running
+       port: 1883 # Replace with the port on which Mosquitto is waiting for connections
+     bridge:
+       ros2mqtt:
+         ros_topics:
+           - /ros/ros2mqtt_msg # This is a topic on which messages will be published by a ROS-based device
+         /ros/ros2mqtt_msg:
+           mqtt_topic: mqtt/ros2mqtt_msg # The mqtt_client maps the above ROS topic to this MQTT topic to which an MQTT-based device will subscribe
+           primitive: true
+       mqtt2ros:
+         mqtt_topics:
+           - mqtt/mqtt2ros_msg # This is a topic on which messages will be published by an MQTT-based device
+         mqtt/mqtt2ros_msg:
+           ros_topic: /ros/mqtt2ros_msg # The mqtt_client maps the above MQTT topic to this ROS topic to which a ROS-based device will subscribe
+           primitive: true
+   ```
+   Replace `<HOST_IP>` with the IP of the machine on which you will run the MQTT broker.
+   This files is used to tell `mqtt_client` how to reach the broker and how to map ROS topics to MQTT topics and viceversa.
+   In this case, the messages received on the ROS topic `/ros/ros2mqtt_msg` are published on the MQTT topic `mqtt/ros2mqtt_msg`.
+   Viceversa, the messages received on the MQTT topic `mqtt/mqtt2ros_msg` are published on the ROS topic `/ros/mqtt2ros_msg`.
+4) Start the `mqtt_client`:
+   ```
+   ros2 launch mqtt_client standalone.launch.ros2.xml params_file:=<PATH_TO_YAML_FILE>
+   ```
+   In this case, `PATH_TO_YAML_FILE` was set to `mqtt_client_config/mqtt_client_config.yaml`
+5) Create a bash file to repeatedly publish ROS messaged:
+   ```
+   cd ..
+   nano ros_publisher.sh
+   ```
+   
+   Insert the following text in the file and save it:
+   
+   ```
+   #!/bin/bash
+
+   topic_name="/ros/ros2mqtt_msg"
+   message_number=1
+   
+   while true; do
+     message="$message_number) This message comes from a ROS-based device"
+     ros2 topic pub $topic_name std_msgs/msg/String "{data: \"$message\"}" --once
+     ((message_number++))
+     sleep 1
+   done
+   ```
+   
+   Make the file executable:
+   
+   ```
+   chmod +x ros_publisher.sh
+   ```
+
+   This script allows to execution the command `ros2 topic pub $topic_name std_msgs/msg/String "{data: \"$message\"}" --once` every second. This command publishes one ROS message on the given topic and then exits.
+   Note that `topic_name` is set to the same value used in the `mqtt_client` configuration file.
+   **N.B.** Instead of using this script, you could as well write a ROS node to publish the data.
+7) Open the Android application in Android studio
+8) In the `Constants.java` file, set the `HOST_IP` value, and set `<SUBSCRIBE_TOPIC>="mqtt/ros2mqtt_msg"` and `<PUBLISH_TOPIC>="mqtt/mqtt2ros_msg"`.
+   **N.B.** The name of the topics are the same used for the MQTT topics in the `mqtt_client` configuration file.
+9) Run the application
+   * Click the `connect` button to connect to `Mosquitto`. A green light is shown if the connection succeeds
+   * Click the `subscribe` button to subscribe to the MQTT topic
+   * Click the `publish` button to publish a message on the topic.
+10) In two different terminals, run the following commands to start a ROS publisher and a ROS subscriber:
+    ```
+    ./ros_publisher.sh
+    ```
+    ```
+    ros2 topic echo /ros/mqtt2ros_msg
+    ```
+    **N.B.** Also in this last case, the topic name is set to the same value as that specified in the `mqtt_client` configuration file.
+
+    If everything works, the following should happen:
+     * Every time the ROS publisher publishes a message, the Android application should receive it and print it in the textview below the subscribe button.
+     * Every time you click the publish button on the Android application, the message should be received by the ROS-based device and written in the terminal.
+
+    Have a look at the video below to see how everything works:
+    https://github.com/cfasana/mqtt2ros_android_example/assets/143723410/4021b027-ff90-415e-91dc-0caeb686c027
+
+
+    
    
