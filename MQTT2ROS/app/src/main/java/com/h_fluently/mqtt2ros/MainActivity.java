@@ -5,8 +5,12 @@ import androidx.core.content.ContextCompat;
 
 import org.eclipse.paho.client.mqttv3.*;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
@@ -70,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void connectionLost(Throwable cause) {
                         if (cause==null){
-                            Log.e(TAG, "Connection to MQTT server was lost, due to explicit request to end the connection.");
+                            Log.w(TAG, "Connection to MQTT server was lost due to an explicit request to disconnect.");
                         }
                         else {
                             Log.e(TAG, "Connection to MQTT server was lost due to the following cause");
@@ -85,7 +89,14 @@ public class MainActivity extends AppCompatActivity {
                     public void messageArrived(String topic, MqttMessage message) throws Exception {
                         Log.i(TAG, "A new message was received on topic '" + topic + "'");
                         runOnUiThread(() -> {
-                            ros2mqttTxtview.setText(new String(message.getPayload()) + "\n" + ros2mqttTxtview.getText().toString());
+                            String newMsg = new String(message.getPayload());
+                            String text =  newMsg + "\n" + ros2mqttTxtview.getText().toString();
+                            SpannableString spannableString = new SpannableString(text);
+                            ForegroundColorSpan redSpan = new ForegroundColorSpan(Color.RED);
+                            spannableString.setSpan(redSpan, 0, newMsg.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            ForegroundColorSpan blackSpan = new ForegroundColorSpan(Color.BLACK);
+                            spannableString.setSpan(blackSpan, newMsg.length(), text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            ros2mqttTxtview.setText(spannableString);
                         });
                     }
 
