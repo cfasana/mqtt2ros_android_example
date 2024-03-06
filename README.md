@@ -9,7 +9,9 @@ The example was created using the following setup:
     * [`ROS2 Humble`](https://docs.ros.org/en/rolling/Releases/Release-Humble-Hawksbill.html) is chosen as ROS distribution
     * [`mqtt_client`](https://wiki.ros.org/mqtt_client) ROS package is used to map MQTT topics to ROS ones and viceversa
 
-In the following, a description of how to configure the environment and run the example is provided. The steps can be slightly adapted to run the example with a different setup (_e.g.,_ using another ROS distribution)
+In the following, a description of how to configure the environment and run the example is provided. The steps can be slightly adapted to run the example with a different setup (_e.g.,_ using another ROS distribution).
+
+**N.B.** If you plan to use `Android SDK >= 31`, have a look at the final section of this documentation about `Using Android SDK >= 31`.
 
 ## Environment configuration
 ### Configuration of the ROS-based device
@@ -223,6 +225,20 @@ In the following, a description of how to configure the environment and run the 
     Have a look at the video below to see how everything works:
     https://github.com/cfasana/mqtt2ros_android_example/assets/143723410/4021b027-ff90-415e-91dc-0caeb686c027
 
+## Using Android SDK >= 31
+If you would like to use `Android SDK >= 31`, you will need to deal with the issue highlighted [here](https://github.com/eclipse/paho.mqtt.android/issues/485#issue-1384943553).
+As explained in the referenced issue, to solve this problem you can build the MQTT libraries from source.
 
-    
+Just copy the files that you find in the `libs` folder of this repository inside `MQTT2ROS/app/libs`. Then, from Android Studio, navigate to the folder, right click on each library and select `Add as library`.
+Finally, edit the app `.gradle` file as follows:
+ 1) Remove the following lines:
+    ```
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+    ```
+ 3) Add the following line:
+    ```
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    ```
+
    
