@@ -1,5 +1,5 @@
 # mqtt2ros_android_example
-This repository provides an example of how to establish a communication between an MQTT-based devices and a ROS2-based device.
+This repository provides an example of how to establish a communication between an MQTT-based device and a ROS2-based device.
 The example was created using the following setup:
   * MQTT-based agent:
     * Android device
