@@ -13,6 +13,12 @@ In the following, a description of how to configure the environment and run the 
 
 **N.B.** If you plan to use `Android SDK >= 31`, have a look at the final section of this documentation about `Using Android SDK >= 31`.
 
+## Disclaimer
+This repository is intended for educational and demonstrative purposes only. It is not designed or tested for use in critical or production environments. The code and concepts presented here should be used with caution, and the author is not liable for any consequences that may arise from improper or unintended use.
+**Do not** rely on this repository for critical or sensitive applications including but not limited to:
+- Medical devices
+- Industrial control systems
+
 ## Environment configuration
 ### Configuration of the ROS-based device
 1. Install ROS2 on your device.
